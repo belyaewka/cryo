@@ -1,0 +1,5 @@
+/venv/
+/.idea/
+/cryodata.db
+/cryodata
+/cryoweb

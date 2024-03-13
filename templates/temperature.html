@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cryogenic storage temperature</title>
+</head>
+<body>
+<h1 style="text-align: center; ">Cryogenic storage temperature , date: {{current_date}}
+</h1>
+<div>
+  <canvas id="myChart"></canvas>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+  const ctx = document.getElementById('myChart');
+
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: {{time | safe}},
+      datasets: [{
+        label: 'cryo storage #1',
+        data: {{temper_1 | safe}},
+        borderWidth: 1
+      },
+      {label: 'cryo storage #2',
+        data: {{temper_2 | safe}},
+        borderWidth: 1
+      }]
+    },
+    options: {responsive: true,
+    maintainAspectRatio: true,
+    aspectRatio: 3,
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+</script>
+</body>
+</html>

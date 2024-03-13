@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<img src="/static/images/logo.jpg"
+                width="200"
+                height="100"/>
+<html>
+<head>
+        <link type="image/x-icon" href="/static/images/favicon.ico" rel="shortcut icon">
+         <title>{{title}}</title>
+</head>
+<body bgcolor="#87CEEB">
+<h1>{{title}}</h1>
+<ul>
+    {% for m in menu -%}
+    <li><big><big>{{m}}</big></big></li>
+    {% endfor -%}
+</ul>
+<p><a href="/temperature">TEMPERATURE TRENDS</a></p>
+<p></p><a href="/level">LEVEL TRENDS</a></p>
+</body>
+</html>
