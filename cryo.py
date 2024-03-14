@@ -9,8 +9,9 @@ import numpy as np
 from db_export import db_export, DATABASE
 import datetime
 import io
-from config import BOT_TOKEN
+from config import BOT_TOKEN, ALLOWED_USERS
 
+# logging configuration
 logging.basicConfig(filename='bot.log',
                     format='%(asctime)s '
                            'LOGGER=%(name)s '
@@ -24,9 +25,7 @@ logging.basicConfig(filename='bot.log',
 
 logger = logging.getLogger('bot')
 
-# ALLOWED_USERS = []
-
-
+# aiogram bot
 bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher(bot)
 
@@ -39,9 +38,11 @@ TEMPER_2 = ['t2', 'T2', 'т2', 'Т2']
 LEVEL_2 = ['l2', 'L2', 'л2', 'Л2', 'у2', 'У2']
 
 
-def cryo():
+def cryo() -> str:
+    """return two strings(message) with data from cryo storages for sending via bot"""
     res = []
     try:
+        # getting a data from the file CRYODATA
         with open('cryodata', 'r', encoding="utf-8") as f:
             for x in f:
                 res.append(x)
@@ -54,14 +55,16 @@ def cryo():
 
 @dp.message_handler(commands=['start', 'help'])
 async def send_welcome(msg):
+    """handling START and HELP messages from user"""
+    logger.info(f'message START or HELP was received from user {msg.from_user.id}')
     await msg.reply(
         text=f'Я криобот для получения показаний с криохранилищ ОПУ ОРРБП. Привет, {msg.from_user.first_name}!',
         reply_markup=markup4)
-    logger.info(f'message START or HELP was received from user {msg.from_user.first_name}')
 
 
 @dp.message_handler(content_types=['text'])
 async def get_text_messages(msg: types.Message):
+    """handling any messages from user"""
     data = None
     param = None
 
@@ -71,11 +74,11 @@ async def get_text_messages(msg: types.Message):
             logger.info('getting data via call function cryo()')
             await msg.answer(data)
         except Exception as e:
-            data = 1  # делаем data is not None
+            data = 1  # making data is not None
             logger.error(f'error occured during getting the data {e}')
             await msg.answer('Ошибка получения данных')
 
-    # recognize command from user (to get a plot)
+    # recognize command from user (which kind of plot user want to get to)
     if msg.text in TEMPER_1:
         param = 'temper_1'
     if msg.text in TEMPER_2:
@@ -90,12 +93,13 @@ async def get_text_messages(msg: types.Message):
         await msg.answer(f'График {param} по вашему запросу подготавливается...')
 
         try:
-            # sq_pd_to_png(f'{param}')
+            # SQL query
             dt = datetime.datetime.now()
             date = dt.strftime('%d-%m-%Y')
             query = f'SELECT time, {param} from cryo WHERE date="{date}"'
             logger.info(f'{query}')
 
+            # export data from db
             try:
                 df = db_export(DATABASE, query)
             except Exception as e:
@@ -117,21 +121,23 @@ async def get_text_messages(msg: types.Message):
                     await bot.send_photo(chat_id=msg.chat.id, photo=buf)
                 except Exception as e:
                     logger.error(f'Send plot error {e}')
-                    await msg.answer('Ошибка генерации графика')
+                    await msg.answer('Ошибка отправки графика')
 
-                # closing and removing all plot objects
+                # closing and removing dataframe and all plot objects
                 plt.clf()
                 del df
                 plt.close(fig)
                 del fig
         except Exception as e:
-            await msg.answer('Ошибка генерации графика на бэкенде')
             logger.error(f'plot generation and sending error {e}')
+            await msg.answer('Ошибка генерации графика на бэкенде')
+
 
         data = 1  # делаем data is not None
 
     if data is None:
         data = 'Вы ввели неверную команду, попробуйте еще раз'
+        logger.info('wrong command was received')
         await msg.answer(data)
 
 
