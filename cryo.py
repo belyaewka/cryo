@@ -132,7 +132,6 @@ async def get_text_messages(msg: types.Message):
             logger.error(f'plot generation and sending error {e}')
             await msg.answer('Ошибка генерации графика на бэкенде')
 
-
         data = 1  # делаем data is not None
 
     if data is None:
