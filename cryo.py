@@ -38,6 +38,7 @@ LEVEL_1 = ['l1', 'L1', 'л1', 'Л1', 'у1', 'У1']
 TEMPER_2 = ['t2', 'T2', 'т2', 'Т2']
 LEVEL_2 = ['l2', 'L2', 'л2', 'Л2', 'у2', 'У2']
 
+
 def cryo():
     res = []
     try:
@@ -47,7 +48,7 @@ def cryo():
 
     except Exception as e:
         res = 'Ошибка получения данных cryodata'
-        logger.error(f'error occured during getting cryodata {e}')
+        logger.error(f'error occured during getting data from file cryodata {e}')
     return f'{res[0]}\n{res[1]}'
 
 
@@ -56,7 +57,7 @@ async def send_welcome(msg):
     await msg.reply(
         text=f'Я криобот для получения показаний с криохранилищ ОПУ ОРРБП. Привет, {msg.from_user.first_name}!',
         reply_markup=markup4)
-    logger.debug(f'message START or HELP was received from user {msg.from_user.first_name}')
+    logger.info(f'message START or HELP was received from user {msg.from_user.first_name}')
 
 
 @dp.message_handler(content_types=['text'])
@@ -74,7 +75,7 @@ async def get_text_messages(msg: types.Message):
             logger.error(f'error occured during getting the data {e}')
             await msg.answer('Ошибка получения данных')
 
-    # recognize command from user
+    # recognize command from user (to get a plot)
     if msg.text in TEMPER_1:
         param = 'temper_1'
     if msg.text in TEMPER_2:
@@ -83,8 +84,11 @@ async def get_text_messages(msg: types.Message):
         param = 'level_1'
     if msg.text in LEVEL_2:
         param = 'level_2'
+
     if param:
+        # feedback to user (plot is preparing)
         await msg.answer(f'График {param} по вашему запросу подготавливается...')
+
         try:
             # sq_pd_to_png(f'{param}')
             dt = datetime.datetime.now()
@@ -99,7 +103,6 @@ async def get_text_messages(msg: types.Message):
                 df = None
 
             if df is not None:
-
                 # making a plot
                 fig = plt.figure()
                 sns.set(font_scale=0.5)
@@ -121,8 +124,9 @@ async def get_text_messages(msg: types.Message):
                 del df
                 plt.close(fig)
                 del fig
-        except:
+        except Exception as e:
             await msg.answer('Ошибка генерации графика на бэкенде')
+            logger.error(f'plot generation and sending error {e}')
 
         data = 1  # делаем data is not None
 
