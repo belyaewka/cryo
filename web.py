@@ -21,6 +21,7 @@ logger = logging.getLogger('web')
 
 app = Flask(__name__)
 
+
 @app.route("/")
 def base():
     res = []
@@ -33,7 +34,8 @@ def base():
     except Exception as e:
         logger.error(f'Error occured during getting data from file CRYOWEB {e}')
         res = ["There was an error occured, ", 'please contact Cryopal service']
-    return render_template('base.html', title = 'CRYOPAL WEB SERVER', menu = res)
+    return render_template('base.html', title='CRYOPAL WEB SERVER', menu=res)
+
 
 @app.route('/temperature')
 def temp():
@@ -44,6 +46,7 @@ def temp():
                            temper_1=get_data('temper_1'),
                            temper_2=get_data('temper_2'))
 
+
 @app.route('/level')
 def level():
     logger.info('render level.html')
@@ -53,5 +56,6 @@ def level():
                            level_1=get_data('level_1'),
                            level_2=get_data('level_2'))
 
+
 if __name__ == '__main__':
-    app.run(debug=True, host="10.1.97.147", port="5000")
+    app.run(debug=True, host="10.1.97.147", port=5000)
