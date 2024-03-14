@@ -6,3 +6,4 @@
 config.py
 bot.log
 web.log
+parse.log
