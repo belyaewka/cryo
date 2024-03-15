@@ -71,7 +71,7 @@ async def get_text_messages(msg: types.Message):
     if msg.text == 'Получить данные c криохранов':
         try:
             data = cryo()
-            logger.info('getting data via call function cryo()')
+            logger.info(f'getting data via call function cryo() user id={msg.from_user.id}')
             await msg.answer(data)
         except Exception as e:
             data = 1  # making data is not None
