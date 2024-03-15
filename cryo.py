@@ -56,6 +56,11 @@ def cryo() -> str:
 @dp.message_handler(commands=['start', 'help'])
 async def send_welcome(msg):
     """handling START and HELP messages from user"""
+    # check if the user is authorized
+    if msg.from_user.id not in ALLOWED_USERS:
+        await msg.answer('Вы не авторизованы, обратитесь к администратору сервиса')
+        logger.info(f'Not allowed  user send message user_id={msg.from_user.id}')
+        return
     logger.info(f'message START or HELP was received from user {msg.from_user.id}')
     await msg.reply(
         text=f'Я криобот для получения показаний с криохранилищ ОПУ ОРРБП. Привет, {msg.from_user.first_name}!',
@@ -64,6 +69,13 @@ async def send_welcome(msg):
 
 @dp.message_handler(content_types=['text'])
 async def get_text_messages(msg: types.Message):
+    # check if the user is authorized
+
+    if msg.from_user.id not in ALLOWED_USERS:
+        await msg.answer('Вы не авторизованы, обратитесь к администратору сервиса')
+        logger.info(f'Not allowed  user send message user_id={msg.from_user.id}')
+        return
+
     """handling any messages from user"""
     data = None
     param = None
