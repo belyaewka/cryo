@@ -67,6 +67,7 @@ async def get_text_messages(msg: types.Message):
     """handling any messages from user"""
     data = None
     param = None
+    logger.info(f'message "{msg.text}" was received from user_id={msg.from_user.id}')
 
     if msg.text == 'Получить данные c криохранов':
         try:
@@ -97,7 +98,7 @@ async def get_text_messages(msg: types.Message):
             dt = datetime.datetime.now()
             date = dt.strftime('%d-%m-%Y')
             query = f'SELECT time, {param} from cryo WHERE date="{date}"'
-            logger.info(f'{query}')
+            logger.info(f'DB={DATABASE}, database query={query}')
 
             # export data from db
             try:
@@ -118,6 +119,7 @@ async def get_text_messages(msg: types.Message):
                 plt.savefig(buf, format='png', dpi=200)
                 buf.seek(0)
                 try:
+                    logger.info(f'sending plot to user_id={msg.from_user.id}')
                     await bot.send_photo(chat_id=msg.chat.id, photo=buf)
                 except Exception as e:
                     logger.error(f'Send plot error {e}')
