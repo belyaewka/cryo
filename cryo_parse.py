@@ -7,7 +7,7 @@ import sqlite3 as sq
 import logging
 
 # logging configuration
-logging.basicConfig(filename='parse.log',
+logging.basicConfig(filename=r'C:\Users\operator\PycharmProjects\cryobot\parse.log',
                     format='%(asctime)s '
                            'LOGGER=%(name)s '
                            'MODULE=%(module)s.py '
