@@ -1,0 +1,9 @@
+Flask~=3.0.0
+matplotlib~=3.8.3
+seaborn~=0.13.2
+numpy~=1.26.4
+aiogram~=2.25.1
+pandas~=2.2.0
+lxml~=4.9.2
+bs4~=0.0.1
+beautifulsoup4~=4.12.2
